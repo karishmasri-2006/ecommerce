@@ -1,84 +1,54 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import axios from 'axios';
+import { useNavigate, Link } from 'react-router-dom';
+
+const API_URL = 'https://ecommerce-backend-lesb.onrender.com';
 
 function Register() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-
-    console.log({
-      name,
-      email,
-      password,
-    });
-
-    alert("Registration Successful ✅");
-
-    navigate("/");
+    try {
+      await axios.post(`${API_URL}/api/auth/register`, { name, email, password });
+      alert('Register Successful ✅');
+      navigate('/login');
+    } catch (err) {
+      alert('Register failed');
+    }
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-      }}
-    >
-      <form
-        onSubmit={handleRegister}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          width: "300px",
-          gap: "10px",
-        }}
-      >
-        <h1>Register</h1>
-
+    <div style={{ padding: '40px', fontFamily: 'Arial' }}>
+      <h2>Register</h2>
+      <form onSubmit={handleRegister}>
         <input
           type="text"
-          placeholder="Enter Name"
+          placeholder="Name"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={e => setName(e.target.value)}
+          style={{ display: 'block', margin: '10px 0', padding: '8px', width: '250px' }}
         />
-
         <input
           type="email"
-          placeholder="Enter Email"
+          placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
+          style={{ display: 'block', margin: '10px 0', padding: '8px', width: '250px' }}
         />
-
         <input
           type="password"
-          placeholder="Enter Password"
+          placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
+          style={{ display: 'block', margin: '10px 0', padding: '8px', width: '250px' }}
         />
-
-        <button type="submit">Register</button>
-
-        <p>
-          Already have account?
-          <span
-            onClick={() => navigate("/")}
-            style={{
-              color: "blue",
-              cursor: "pointer",
-              marginLeft: "5px",
-            }}
-          >
-            Login
-          </span>
-        </p>
+        <button type="submit" style={{ margin: '10px 0', padding: '8px 20px' }}>Register</button>
       </form>
+      <p>Already have account? <Link to="/login">Login</Link></p>
     </div>
   );
 }

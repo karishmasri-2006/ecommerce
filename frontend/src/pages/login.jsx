@@ -1,75 +1,47 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import axios from 'axios';
+import { useNavigate, Link } from 'react-router-dom';
+
+const API_URL = 'https://ecommerce-backend-lesb.onrender.com';
 
 function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
-    console.log({
-      email,
-      password,
-    });
-
-    alert("Login Successful ✅");
-
-    navigate("/home");
+    try {
+      const res = await axios.post(`${API_URL}/api/auth/login`, { email, password });
+      localStorage.setItem('token', res.data.token);
+      alert('Login Successful ✅');
+      navigate('/home');
+    } catch (err) {
+      alert('Login failed');
+    }
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-      }}
-    >
-      <form
-        onSubmit={handleLogin}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          width: "300px",
-          gap: "10px",
-        }}
-      >
-        <h1>Login</h1>
-
+    <div style={{ padding: '40px', fontFamily: 'Arial' }}>
+      <h2>Login</h2>
+      <form onSubmit={handleLogin}>
         <input
           type="email"
-          placeholder="Enter Email"
+          placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
+          style={{ display: 'block', margin: '10px 0', padding: '8px', width: '250px' }}
         />
-
         <input
           type="password"
-          placeholder="Enter Password"
+          placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
+          style={{ display: 'block', margin: '10px 0', padding: '8px', width: '250px' }}
         />
-
-        <button type="submit">Login</button>
-
-        <p>
-          Don't have account?
-          <span
-            onClick={() => navigate("/register")}
-            style={{
-              color: "blue",
-              cursor: "pointer",
-              marginLeft: "5px",
-            }}
-          >
-            Register
-          </span>
-        </p>
+        <button type="submit" style={{ margin: '10px 0', padding: '8px 20px' }}>Login</button>
       </form>
+      <p>Don't have account? <Link to="/register">Register</Link></p>
     </div>
   );
 }
