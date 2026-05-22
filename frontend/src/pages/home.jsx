@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function home() {
+function Home() {
   const [products] = useState([
     {
       id: 1,
@@ -120,4 +120,4 @@ function home() {
   );
 }
 
-export default home;
+export default Home;
