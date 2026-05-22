@@ -1,38 +1,63 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-exports.createProduct = async (req, res) => {
+// GET all products
+exports.getProducts = async (req, res) => {
   try {
-    const { name, description, price, image, stock } = req.body;
-
-    const product = await prisma.product.create({
-      data: {
-        name,
-        description,
-        price: parseFloat(price),
-        image,
-        stock: stock ? parseInt(stock) : 0,
-      },
-    });
-
-    res.status(201).json(product);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
+    const products = await prisma.product.findMany();
+    res.json(products);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-exports.getProducts = async (req, res) => {
+// POST create product - admin only
+exports.createProduct = async (req, res) => {
   try {
-    const products = await prisma.product.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
+    const { name, price, description } = req.body;
+    const product = await prisma.product.create({
+      data: { name, price: parseFloat(price), description }
+    });
+    res.json({ success: true, product });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// POST checkout - CLEARS CART
+exports.checkout = async (req, res) => {
+  try {
+    const userId = req.user.id; // from authMiddleware
+    const { items } = req.body;
+
+    if (!items || items.length === 0) {
+      return res.status(400).json({ success: false, message: "Cart is empty" });
+    }
+
+    const total = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+    // 1. Create order
+    await prisma.order.create({
+      data: {
+        userId: userId,
+        items: items,
+        total: total,
+        status: "completed"
+      }
     });
 
-    res.status(200).json(products);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
+    // 2. Clear cart in DB ← THIS FIXES YOUR BUG
+    await prisma.user.update({
+      where: { id: userId },
+      data: { cart: [] }
+    });
+
+    res.json({ success: true, message: "Checkout Successful" });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
