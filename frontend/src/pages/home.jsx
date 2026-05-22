@@ -8,14 +8,12 @@ function Home() {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 1. Load products + cart on page load
   useEffect(() => {
     fetchProducts();
     const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
     setCart(savedCart);
   }, []);
 
-  // 2. Fetch products from backend
   const fetchProducts = async () => {
     try {
       const res = await axios.get(`${API_URL}/api/products`);
@@ -25,11 +23,9 @@ function Home() {
     }
   };
 
-  // 3. Add to cart
   const addToCart = (product) => {
     const exists = cart.find(item => item.id === product.id);
     let newCart;
-    
     if (exists) {
       newCart = cart.map(item =>
         item.id === product.id ? { ...item, qty: item.qty + 1 } : item
@@ -37,42 +33,35 @@ function Home() {
     } else {
       newCart = [...cart, { ...product, qty: 1 }];
     }
-    
     setCart(newCart);
     localStorage.setItem('cart', JSON.stringify(newCart));
   };
 
-  // 4. Remove from cart
   const removeFromCart = (productId) => {
     const newCart = cart.filter(item => item.id !== productId);
     setCart(newCart);
     localStorage.setItem('cart', JSON.stringify(newCart));
   };
 
-  // 5. Calculate total
   const getTotal = () => {
     return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   };
 
-  // 6. Checkout - THIS IS THE FIX
   const handleCheckout = async () => {
     if (cart.length === 0) return alert('Cart is empty');
-    
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
       if (!token) return alert('Please login first');
-
       const res = await axios.post(
         `${API_URL}/api/products/checkout`,
         { items: cart },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       if (res.data.success) {
         alert('Checkout Successful ✅');
-        setCart([]); // <-- CLEARS THE UI
-        localStorage.removeItem('cart'); // <-- CLEARS LOCALSTORAGE
+        setCart([]);
+        localStorage.removeItem('cart');
       }
     } catch (err) {
       console.log(err);
@@ -86,7 +75,6 @@ function Home() {
     <div style={{ padding: '20px', fontFamily: 'Arial' }}>
       <h1 style={{ textAlign: 'center' }}>🛍️ My Store</h1>
       
-      {/* Products Grid */}
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', 
@@ -124,7 +112,6 @@ function Home() {
         ))}
       </div>
 
-      {/* Cart Section */}
       <div style={{ borderTop: '2px solid #ddd', paddingTop: '20px' }}>
         <h2>🛒 Cart</h2>
         {cart.length === 0 ? (
