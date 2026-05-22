@@ -73,6 +73,19 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // 5. Start server
+// 5. Create product route - for Thunder Client
+app.post('/api/products', async (req, res) => {
+  try {
+    const { name, price, description, image, stock } = req.body;
+    const product = await prisma.product.create({
+      data: { name, price, description, image, stock }
+    });
+    res.status(201).json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to create product' });
+  }
+});
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
