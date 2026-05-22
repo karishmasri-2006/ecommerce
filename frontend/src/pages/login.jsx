@@ -22,7 +22,7 @@ function Login() {
   };
 
   return (
-    <div style={{ padding: '40px', fontFamily: 'Arial' }}>
+    <div style={{ padding: '40px', fontFamily: 'Arial', maxWidth: '400px', margin: '100px auto' }}>
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <input
@@ -30,18 +30,22 @@ function Login() {
           placeholder="Email"
           value={email}
           onChange={e => setEmail(e.target.value)}
-          style={{ display: 'block', margin: '10px 0', padding: '8px', width: '250px' }}
+          required
+          style={{ display: 'block', width: '100%', padding: '10px', margin: '10px 0', fontSize: '16px' }}
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={e => setPassword(e.target.value)}
-          style={{ display: 'block', margin: '10px 0', padding: '8px', width: '250px' }}
+          required
+          style={{ display: 'block', width: '100%', padding: '10px', margin: '10px 0', fontSize: '16px' }}
         />
-        <button type="submit" style={{ margin: '10px 0', padding: '8px 20px' }}>Login</button>
+        <button type="submit" style={{ width: '100%', padding: '10px', fontSize: '16px', cursor: 'pointer' }}>
+          Login
+        </button>
       </form>
-      <p>Don't have account? <Link to="/register">Register</Link></p>
+      <p style={{ marginTop: '20px' }}>Don't have account? <Link to="/register">Register</Link></p>
     </div>
   );
 }

@@ -77,31 +77,42 @@ function Home() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('cart');
+    navigate('/login');
+  };
+
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h1 style={{ textAlign: 'center' }}>🛍️ My Store</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1 style={{ textAlign: 'center', flex: 1 }}>🛍️ My Store</h1>
+        <button onClick={handleLogout} style={{ padding: '8px 16px', cursor: 'pointer' }}>Logout</button>
+      </div>
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
         gap: '20px',
-        marginBottom: '40px'
+        marginBottom: '40px',
+        marginTop: '20px'
       }}>
         {products.map(product => (
           <div key={product.id} style={{
-            border: '1px solid #ccc',
+            border: '1px solid #ddd',
             borderRadius: '8px',
-            padding: '15px',
+            padding: '16px',
             textAlign: 'center',
             background: 'white'
           }}>
             <img
-              src={product.imageUrl || `https://via.placeholder.com/200?text=${product.name}`}
+              src={`https://via.placeholder.com/200?text=${encodeURIComponent(product.name)}`}
               alt={product.name}
-              style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '4px' }}
+              style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: '4px', marginBottom: '10px' }}
             />
             <h3 style={{ margin: '10px 0 5px 0', fontSize: '16px' }}>{product.name}</h3>
-            <p style={{ margin: '5px 0' }}>₹ {product.price}</p>
+            <p style={{ margin: '5px 0', color: '#666', fontSize: '14px' }}>{product.description}</p>
+            <p style={{ margin: '5px 0', fontSize: '18px', fontWeight: 'bold' }}>₹ {product.price}</p>
             <button
               onClick={() => addToCart(product)}
               style={{
@@ -111,7 +122,8 @@ function Home() {
                 padding: '8px 16px',
                 borderRadius: '4px',
                 cursor: 'pointer',
-                width: '100%'
+                width: '100%',
+                marginTop: '10px'
               }}
             >
               Add To Cart
@@ -120,7 +132,7 @@ function Home() {
         ))}
       </div>
 
-      <div style={{ borderTop: '1px solid #ccc', paddingTop: '20px' }}>
+      <div style={{ borderTop: '2px solid #ddd', paddingTop: '20px' }}>
         <h2>🛒 Cart</h2>
         {cart.length === 0? (
           <p>Cart is empty</p>
@@ -131,20 +143,20 @@ function Home() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                padding: '8px',
+                padding: '10px',
                 borderBottom: '1px solid #eee'
               }}>
-                <span>{item.name}</span>
-                <span>₹ {item.price}</span>
+                <span>{item.name} x{item.qty}</span>
+                <span>₹ {item.price * item.qty}</span>
                 <button
                   onClick={() => removeFromCart(item.id)}
-                  style={{ background: 'red', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px' }}
+                  style={{ background: 'red', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
                 >
                   Remove
                 </button>
               </div>
             ))}
-            <p><b>Total: ₹ {getTotal()}</b></p>
+            <h3>Total: ₹ {getTotal()}</h3>
             <button
               onClick={handleCheckout}
               disabled={loading}
@@ -152,10 +164,11 @@ function Home() {
                 background: 'green',
                 color: 'white',
                 border: 'none',
-                padding: '10px 20px',
+                padding: '12px 24px',
                 fontSize: '16px',
                 cursor: 'pointer',
-                borderRadius: '4px'
+                borderRadius: '4px',
+                opacity: loading? 0.5 : 1
               }}
             >
               {loading? 'Processing...' : 'Checkout'}

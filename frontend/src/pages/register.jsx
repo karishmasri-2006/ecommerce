@@ -22,7 +22,7 @@ function Register() {
   };
 
   return (
-    <div style={{ padding: '40px', fontFamily: 'Arial' }}>
+    <div style={{ padding: '40px', fontFamily: 'Arial', maxWidth: '400px', margin: '100px auto' }}>
       <h2>Register</h2>
       <form onSubmit={handleRegister}>
         <input
@@ -30,25 +30,30 @@ function Register() {
           placeholder="Name"
           value={name}
           onChange={e => setName(e.target.value)}
-          style={{ display: 'block', margin: '10px 0', padding: '8px', width: '250px' }}
+          required
+          style={{ display: 'block', width: '100%', padding: '10px', margin: '10px 0', fontSize: '16px' }}
         />
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={e => setEmail(e.target.value)}
-          style={{ display: 'block', margin: '10px 0', padding: '8px', width: '250px' }}
+          required
+          style={{ display: 'block', width: '100%', padding: '10px', margin: '10px 0', fontSize: '16px' }}
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={e => setPassword(e.target.value)}
-          style={{ display: 'block', margin: '10px 0', padding: '8px', width: '250px' }}
+          required
+          style={{ display: 'block', width: '100%', padding: '10px', margin: '10px 0', fontSize: '16px' }}
         />
-        <button type="submit" style={{ margin: '10px 0', padding: '8px 20px' }}>Register</button>
+        <button type="submit" style={{ width: '100%', padding: '10px', fontSize: '16px', cursor: 'pointer' }}>
+          Register
+        </button>
       </form>
-      <p>Already have account? <Link to="/login">Login</Link></p>
+      <p style={{ marginTop: '20px' }}>Already have account? <Link to="/login">Login</Link></p>
     </div>
   );
 }
