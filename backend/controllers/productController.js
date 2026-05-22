@@ -1,7 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// GET all products
 exports.getProducts = async (req, res) => {
   try {
     const products = await prisma.product.findMany();
@@ -12,7 +11,6 @@ exports.getProducts = async (req, res) => {
   }
 };
 
-// POST create product - admin only
 exports.createProduct = async (req, res) => {
   try {
     const { name, price, description } = req.body;
@@ -26,10 +24,9 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-// POST checkout - CLEARS CART
 exports.checkout = async (req, res) => {
   try {
-    const userId = req.user.id; // from authMiddleware
+    const userId = req.user.id;
     const { items } = req.body;
 
     if (!items || items.length === 0) {
@@ -38,7 +35,6 @@ exports.checkout = async (req, res) => {
 
     const total = items.reduce((sum, item) => sum + item.price * item.qty, 0);
 
-    // 1. Create order
     await prisma.order.create({
       data: {
         userId: userId,
@@ -48,7 +44,6 @@ exports.checkout = async (req, res) => {
       }
     });
 
-    // 2. Clear cart in DB ← THIS FIXES YOUR BUG
     await prisma.user.update({
       where: { id: userId },
       data: { cart: [] }
