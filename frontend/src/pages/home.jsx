@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-function Home() {
+function home() {
+  // Hardcoded products with real images - no backend update needed
   const [products] = useState([
     {
       id: 1,
@@ -98,9 +99,9 @@ function Home() {
                   <span>₹ {item.price * item.qty}</span>
                   <button
                     onClick={() => removeFromCart(item.id)}
-                    style={{ padding: '6px 12px', background: 'red', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                    style={{ padding: '4px 8px', background: 'red', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
                   >
-                    Remove
+                    X
                   </button>
                 </div>
               </div>
@@ -120,4 +121,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default home;
