@@ -53,5 +53,22 @@ router.get('/seed', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
+router.get("/seed", async (req, res) => {
+  const { PrismaClient } = require('@prisma/client');
+  const prisma = new PrismaClient();
+  try {
+    await prisma.product.deleteMany();
+    await prisma.product.createMany({
+      data: [
+        { name: 'Wireless Headphones', price: 2999, description: 'Over-ear headphones' },
+        { name: 'Smart Watch', price: 4999, description: 'Fitness smartwatch' },
+        { name: 'Wireless Mouse', price: 1499, description: 'Ergonomic wireless mouse' },
+        { name: 'Power Bank', price: 1999, description: '10000mAh power bank' },
+      ]
+    });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = router;
