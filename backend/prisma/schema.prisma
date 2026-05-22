@@ -1,8 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DB_URL") // KEEP THIS AS DB_URL TO MATCH RENDER
+}
+
 model User {
   id String @id @default(cuid())
-  name String? 
+  name String
   email String @unique
   password String
-  cart Json? @default("[]")
+  cart CartItem[]
   orders Order[]
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id String @id @default(cuid())
+  name String
+  description String
+  price Float
+  image String
+  stock Int @default(0)
+  cartItems CartItem[]
+  orderItems OrderItem[]
+  createdAt DateTime @default(now())
+}
+
+model CartItem {
+  id String @id @default(cuid())
+  quantity Int @default(1)
+
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  productId String
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId]) // 1 product per user in cart
+}
+
+model Order {
+  id String @id @default(cuid())
+  total Float
+  status String @default("PENDING") // PENDING, PAID, SHIPPED, DELIVERED
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  items OrderItem[]
+
+  createdAt DateTime @default(now())
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+  quantity Int
+  price Float // Price at time of purchase
+
+  orderId String
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product Product @relation(fields: [productId], references: [id])
 }
